@@ -1,0 +1,109 @@
+.Dd $Mdocdate$
+.Dt TAG 1
+.Os
+.Sh NAME
+.Nm tag
+.Nd a simple tagging system
+.
+.Sh SYNOPSIS
+.Nm
+.Ar file
+.Ar tags ...
+.Br
+.Nm
+.Fl l Op Ar file
+.Nm
+.Fl g Ar tag
+.
+.Sh DESCRIPTION
+.Nm
+is a simple tagging system for hierarchical file systems.
+.
+.Bl -dash -offset 6n
+.It
+Tags are stored as file\(entag pairs in the file specified by
+.Ev TAG_INDEX .
+.It
+If
+.Ev TAG_INDEX
+does not exist,
+.Nm
+asks if you want to create it.
+.It
+If
+.Ev TAG_INDEX
+is unset, then the local file
+.Li .index
+is used.
+In other words,
+.Nm
+is local to the current directory by default.
+.It
+If you want a global tag index for your own user, define and export
+.Ev TAG_INDEX
+as something like
+.Li $HOME/.index .
+.It
+If you want to switch between multiple project-local tag indices
+depending on what directory you are in, you can use something like
+.Xr direnv 1 .
+.El
+.
+.Sh INTERFACE
+.Bl -tag -width=6n -offset=6n
+.It Ar file Ar tags ...
+add
+.Ar tags
+to
+.Ar file
+.It Fl l Op Ar file
+list all tags [of
+.Ar file ] ,
+one per line
+.It Fl g Ar tag
+list all file\(entag pairs whose tag matches
+.Ar tag
+.El
+.
+.Sh EXAMPLES
+Add multiple tags to the file or directory
+.Li t :
+.
+.Bd -literal -offset 6n
+$ tag t prog pl=c
+.Ed
+
+List all tags of
+.Li t :
+.
+.Bd -literal -offset 6n
+$ tag -l t
+pl=c
+prog
+.Ed
+
+List files and directories with
+.Li pl=
+tags:
+.
+.Bd -literal -offset 6n
+$ tag -g pl= | column -t
+/home/john/prj/watch  pl=c
+/home/john/prj/rn     pl=c
+/home/john/prj/t      pl=c
+/home/john/prj/tag    pl=sh
+.Ed
+.
+.Sh LIMITATIONS
+.Bl -dash -offset 6n
+.It
+In the file\(entag pairs in
+.Ev TAG_INDEX ,
+the file and the tag are separated by a tab character.
+As such,
+.Nm
+does not support files with tabs in their names.
+.El
+.
+.Sh AUTHORS
+.An John Ankarström Aq Mt john@ankarstrom.se
