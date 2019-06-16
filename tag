@@ -20,7 +20,7 @@ assert [ $# -gt 0 ]
 case "$1" in
 -l)
 	assert [ $# -eq 2 ]
-	export file=$2
+	export file=$(readlink -f $2)
 	cat "$TAG_INDEX" |
 	perl -ne 'print "$1\n" if /^\Q${ENV{file}}\E\t(.*)/'
 	return $?
@@ -47,7 +47,7 @@ esac
 # tag file
 
 assert [ $# -gt 1 ]
-file=$1
+file=$(readlink -f $1)
 shift
 
 while [ $# -gt 0 ]; do
