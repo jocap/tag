@@ -11,7 +11,9 @@ usage="usage: $0 file tags ...
 
 assert [ $# -gt 0 ]
 
-[ ! -e .index ] && touch .index
+[ -z "$TAG_INDEX" ] && TAG_INDEX=.index
+
+[ ! -e "$TAG_INDEX" ] && touch "$TAG_INDEX"
 
 # parse arguments
 
@@ -19,14 +21,14 @@ case "$1" in
 -l)
 	assert [ $# -eq 2 ]
 	export file=$2
-	cat .index |
+	cat "$TAG_INDEX" |
 	perl -ne 'print "$1\n" if /^\Q${ENV{file}}\E\t(.*)/'
 	return $?
 	;;
 -g)
 	assert [ $# -eq 2 ]
 	export tag=$2
-	cat .index |
+	cat "$TAG_INDEX" |
 	perl -ne 'print if /^([^\t]*)\t([^\t]*\Q${ENV{tag}}\E.*$)/'
 	return $?
 	;;
@@ -49,10 +51,10 @@ file=$1
 shift
 
 while [ $# -gt 0 ]; do
-	echo "$file	$1" >> .index
+	echo "$file	$1" >> "$TAG_INDEX"
 	shift
 done
 
 tmp=$(mktemp)
-cat .index | sort | uniq > "$tmp"
-mv "$tmp" .index
+cat "$TAG_INDEX" | sort | uniq > "$tmp"
+mv "$tmp" "$TAG_INDEX"
