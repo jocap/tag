@@ -13,7 +13,17 @@ assert [ $# -gt 0 ]
 
 [ -z "$TAG_INDEX" ] && TAG_INDEX=.index
 
-[ ! -e "$TAG_INDEX" ] && touch "$TAG_INDEX"
+if [ ! -e "$TAG_INDEX" ]; then
+	while true; do
+		echo -n "$TAG_INDEX does not exist. Create it? (y/n) "
+		read yn
+		case "$yn" in
+			[Yy]*) touch "$TAG_INDEX"; break ;;
+			[Nn]*) echo 'Aborted.'; exit 1 ;;
+			*) echo 'Please answer yes or no.'
+		esac
+	done
+fi
 
 # parse arguments
 
