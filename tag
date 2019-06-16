@@ -6,8 +6,8 @@ err() { echo "$@" 1>&2; exit 1; }
 assert() { "$@" || err "$usage"; }
 
 usage="usage: $0 file tags ...
-   or: $0 -l file
-   or: $0 -g tag"
+       $0 -l [file]
+       $0 -g tag"
 
 assert [ $# -gt 0 ]
 
@@ -19,11 +19,16 @@ assert [ $# -gt 0 ]
 
 case "$1" in
 -l)
-	assert [ $# -eq 2 ]
-	export file=$(readlink -f $2)
-	cat "$TAG_INDEX" |
-	perl -ne 'print "$1\n" if /^\Q${ENV{file}}\E\t(.*)/'
-	return $?
+	assert [ $# -lt 3 ]
+	if [ $# -eq 1 ]; then
+		cat "$TAG_INDEX"
+		return 0
+	else
+		export file=$(readlink -f $2)
+		cat "$TAG_INDEX" |
+		perl -ne 'print "$1\n" if /^\Q${ENV{file}}\E\t(.*)/'
+		return $?
+	fi
 	;;
 -g)
 	assert [ $# -eq 2 ]
